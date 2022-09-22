@@ -1,3 +1,4 @@
+import { makePicsMarkup } from './makePicsMarkup';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
@@ -8,10 +9,12 @@ const refs = {
   inputEl: document.querySelector('input[name="searchQuery"]'),
   btnEl: document.querySelector('button[type="submit"]'),
   galleryDivEl: document.querySelector('.gallery'),
+  loadMoreBtnEl: document.querySelector('.load-more'),
 };
 
 refs.inputEl.addEventListener('input', debounce(onInputQuery, 300));
 refs.btnEl.addEventListener('click', onBtnClick);
+refs.loadMoreBtnEl.addEventListener('click', onLoadMoreBtnClick);
 
 let query = '';
 
@@ -21,15 +24,23 @@ function onInputQuery(event) {
 
 async function onBtnClick(event) {
   event.preventDefault();
+  refs.galleryDivEl.innerHTML = '';
+  //   let page = 1;
   try {
     const response = await axios.get(
-      `https://pixabay.com/api/?key=30100750-b02cb32f61256b4afede3508c&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40`
+      `https://pixabay.com/api/?key=30100750-b02cb32f61256b4afede3508c&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=1&per_page=40`
     );
     const picsArray = await response.data.hits;
-    refs.galleryDivEl.insertAdjacentHTML(
-      'beforeend',
-      makePicsMarkup(picsArray)
-    );
+    if (picsArray.length !== 0) {
+      refs.galleryDivEl.insertAdjacentHTML(
+        'beforeend',
+        makePicsMarkup(picsArray)
+      );
+    } else {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -37,47 +48,7 @@ async function onBtnClick(event) {
   //   simpleLightbox();
 }
 
-function makePicsMarkup(picsArray) {
-  return picsArray
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => {
-        return `
-<div class="photo-card">
-  <a class="photo-card__link" href="${largeImageURL}">
-  <img class="photo-card__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
-  </a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes</b>
-      <span>${likes}</span>
-    </p>
-    <p class="info-item">
-      <b>Views</b>
-      <span>${views}</span>
-    </p>
-    <p class="info-item">
-      <b>Comments</b>
-      <span>${comments}</span>
-    </p>
-    <p class="info-item">
-      <b>Downloads</b>
-      <span>${downloads}</span>
-    </p>
-  </div>
-</div>
-    `;
-      }
-    )
-    .join('');
-}
+function onLoadMoreBtnClick() {}
 
 // function simpleLightbox() {
 //   var lightbox = new SimpleLightbox('.gallery a', {});
