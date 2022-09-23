@@ -1,4 +1,4 @@
-export function makePicsMarkup(picsArray) {
+export default function makePicsMarkup(picsArray) {
   return picsArray
     .map(
       ({
