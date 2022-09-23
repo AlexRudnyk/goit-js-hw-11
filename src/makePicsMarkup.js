@@ -13,7 +13,7 @@ export default function makePicsMarkup(picsArray) {
         return `
 <div class="photo-card">
   <a class="photo-card__link" href="${largeImageURL}">
-  <img class="photo-card__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
+  <img class="photo-card__img" src="${webformatURL}" alt="${tags}" height="300" loading="lazy" />
   </a>
   <div class="info">
     <p class="info-item">
