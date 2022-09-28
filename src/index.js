@@ -43,9 +43,7 @@ async function fetchPics() {
         refs.loadMoreBtn.classList.remove('load-more');
         if (refs.galleryEl.childElementCount >= photoCard.data.totalHits) {
           refs.loadMoreBtn.classList.add('load-more');
-          Notify.failure(
-            "We're sorry, but you've reached the end of search results."
-          );
+          Notify.info("You've reached the end of search results.");
         }
       } else {
         Notify.failure(
